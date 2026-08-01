@@ -158,24 +158,30 @@ dialog::backdrop { background: rgb(0 0 0 / 50%); }
     </p>
 
     <div class="note" style="border-left:3px solid var(--warn);margin-bottom:1rem">
-      <strong>무료 플랜으로 되는 것과 안 되는 것</strong><br />
-      ✅ 기본 제공 목소리로 텍스트 읽기 — <strong>매달 10,000자 무료</strong>, 카드 등록 불필요<br />
-      ❌ <strong>내 목소리 복제는 무료 플랜에서 안 됩니다.</strong>
-      ElevenLabs가 <strong>Starter 플랜(월 $5)</strong>부터 제공하는 기능입니다.<br />
-      <span style="opacity:0.8">일단 무료로 가입해서 읽어주기부터 써보고, 내 목소리가 필요하면 그때 결정하세요.</span>
+      <strong>내 목소리 복제는 무료 플랜에서 안 됩니다.</strong><br />
+      ElevenLabs는 <strong>Starter 플랜(월 $5)</strong>부터 목소리 복제를 지원합니다.
+      무료(Free)로는 기본 제공 목소리로 텍스트를 읽는 것만 됩니다.<br />
+      <span style="opacity:0.85">내 목소리로 쓰려면 아래 2번에서 Starter로 업그레이드하세요. 카드 등록이 필요합니다.</span>
     </div>
 
     <ol class="steps">
       <li>
-        <strong>무료 가입하기</strong><br />
+        <strong>가입하기</strong><br />
         <span class="muted">구글 계정으로 가입하면 가장 빠릅니다. 이메일로 가입하면 인증 메일을 한 번 확인해야 합니다.</span><br />
         <a class="btn ghost" style="margin-top:0.4rem" href="https://elevenlabs.io/app/sign-up" target="_blank" rel="noopener">
           elevenlabs.io 가입하러 가기 ↗
         </a>
       </li>
       <li>
-        <strong>요금제는 건드리지 않습니다</strong><br />
-        <span class="muted">가입하면 자동으로 무료(Free) 플랜입니다. 유료 안내가 보여도 그냥 닫으세요.</span>
+        <strong>Starter로 업그레이드 (목소리 복제에 필요)</strong><br />
+        <span class="muted">
+          가입 직후엔 무료(Free) 플랜입니다. 아래 버튼으로 요금제 화면에 들어가
+          <strong>Starter($5/월)</strong>를 선택하고 결제 정보를 등록하세요.
+          기본 목소리로만 쓸 거면 이 단계는 건너뛰어도 됩니다.
+        </span><br />
+        <a class="btn ghost" style="margin-top:0.4rem" href="https://elevenlabs.io/app/subscription" target="_blank" rel="noopener">
+          요금제 선택하러 가기 ↗
+        </a>
       </li>
       <li>
         <strong>API 키 만들기</strong><br />
@@ -222,12 +228,10 @@ dialog::backdrop { background: rgb(0 0 0 / 50%); }
         <button type="button" class="btn ghost" id="open-record">+ 목소리 만들기</button>
       </div>
       <div id="clone-notice" class="note" style="margin-bottom:0.8rem;border-left:3px solid var(--warn)" hidden>
-        <strong>지금 플랜에서는 목소리 복제를 쓸 수 없습니다.</strong><br />
-        ElevenLabs는 무료(Free) 플랜에서 목소리 복제를 빼놨습니다.
-        <strong>Starter 플랜(월 $5)</strong>부터 쓸 수 있습니다.
-        아래 목록의 기본 목소리로 텍스트를 읽는 것은 지금도 됩니다.<br />
+        <strong>아직 무료(Free) 플랜이라 목소리 복제가 잠겨 있습니다.</strong><br />
+        Starter로 업그레이드하면 바로 풀립니다. 아래 목록의 기본 목소리로 텍스트를 읽는 것은 지금도 됩니다.<br />
         <a href="https://elevenlabs.io/app/subscription" target="_blank" rel="noopener" style="color:var(--accent)">
-          요금제 확인하러 가기 ↗
+          Starter로 업그레이드하기 ↗
         </a>
       </div>
       <div id="voice-list" class="voice-list"><p class="muted">불러오는 중…</p></div>
