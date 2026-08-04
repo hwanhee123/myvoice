@@ -63,6 +63,8 @@ textarea, input[type="text"], input[type="password"], select {
 }
 textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
+input[type="range"] { width: 100%; accent-color: var(--accent); padding: 0; background: none; border: 0; }
+
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
   padding: 0.55rem 0.95rem; border: 1px solid var(--border); border-radius: 10px;
@@ -251,6 +253,21 @@ dialog::backdrop { background: rgb(0 0 0 / 50%); }
 
       <textarea id="text" rows="6" placeholder="여기에 읽힐 내용을 입력하세요."></textarea>
 
+      <div class="row" style="margin-top:0.8rem;gap:1.5rem;flex-wrap:wrap">
+        <label class="muted" style="flex:1;min-width:160px;font-size:0.82rem">
+          <span class="row between" style="margin-bottom:0.15rem">
+            <span>빠르기</span><span id="speed-value">1.0x</span>
+          </span>
+          <input type="range" id="speed" min="0.7" max="1.2" step="0.05" value="1" style="width:100%" />
+        </label>
+        <label class="muted" style="flex:1;min-width:160px;font-size:0.82rem">
+          <span class="row between" style="margin-bottom:0.15rem">
+            <span>억양 표현력</span><span id="stability-value">보통</span>
+          </span>
+          <input type="range" id="stability" min="0" max="1" step="0.05" value="0.5" style="width:100%" />
+        </label>
+      </div>
+
       <div class="row between" style="margin-top:0.7rem">
         <span class="muted" id="cost">0자 · 예상 0 크레딧</span>
         <button type="button" class="btn primary" id="generate" disabled>음성 만들기</button>
@@ -323,7 +340,7 @@ const $ = (id) => document.getElementById(id);
 const el = {};
 for (const id of [
   'usage','usage-label','usage-fill','banner','setup','app','key-input','key-save','key-clear',
-  'demo-start','demo-exit','model-picker','clone-notice',
+  'demo-start','demo-exit','model-picker','clone-notice','speed','speed-value','stability','stability-value',
   'voice-list','open-record','model','text','cost','generate','result','player','download',
   'history','history-count','record-dialog','script','rec-toggle','rec-timer','rec-time',
   'rec-upload-btn','rec-preview','rec-file','rec-name','rec-cancel','rec-save',
@@ -739,6 +756,17 @@ function resetRecordDialog() {
 // 음성 생성
 // ─────────────────────────────────────────
 
+function stabilityLabel(v) {
+  if (v < 0.3) return '풍부함';
+  if (v > 0.7) return '안정적';
+  return '보통';
+}
+
+function updateVoiceControls() {
+  el['speed-value'].textContent = Number(el.speed.value).toFixed(2) + 'x';
+  el['stability-value'].textContent = stabilityLabel(Number(el.stability.value));
+}
+
 function updateCost() {
   const chars = [...el.text.value].length;
   // 데모는 크레딧을 쓰지 않으므로 글자 수만 보여준다.
@@ -761,6 +789,8 @@ function speakDemo(text, voiceName) {
   const utter = new SpeechSynthesisUtterance(text);
   const voice = speechSynthesis.getVoices().find((v) => v.name === voiceName);
   if (voice) { utter.voice = voice; utter.lang = voice.lang; }
+  // 데모에서도 빠르기 슬라이더가 체감되게 반영한다. 억양(stability)은 브라우저 음성엔 대응 옵션이 없다.
+  utter.rate = Number(el.speed.value) || 1;
   speechSynthesis.speak(utter);
 }
 
@@ -804,7 +834,16 @@ async function generate() {
     const res = await el11('/text-to-speech/' + state.selectedVoiceId + '?output_format=mp3_44100_128', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text, model_id: el.model.value }),
+      body: JSON.stringify({
+        text: text,
+        model_id: el.model.value,
+        voice_settings: {
+          speed: Number(el.speed.value),
+          stability: Number(el.stability.value),
+          similarity_boost: 0.75,
+          use_speaker_boost: true,
+        },
+      }),
     });
     const blob = await res.blob();
 
@@ -961,6 +1000,9 @@ function boot() {
   el['key-clear'].addEventListener('click', clearKey);
   el['demo-start'].addEventListener('click', startDemo);
   el['demo-exit'].addEventListener('click', exitDemo);
+  el.speed.addEventListener('input', updateVoiceControls);
+  el.stability.addEventListener('input', updateVoiceControls);
+  updateVoiceControls();
 
   el['open-record'].addEventListener('click', () => el['record-dialog'].showModal());
   el['rec-cancel'].addEventListener('click', () => { el['record-dialog'].close(); resetRecordDialog(); });
